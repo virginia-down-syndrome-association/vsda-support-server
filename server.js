@@ -37,15 +37,11 @@ server.use('/', express.static('public'));
 
 server.post('/matrix', cors(corsOptions), async (req, res) => {
   try {
-    const data = req.body;     // handle request body and convert to message to pass to clientResponse
+    const { destinations, origin} = req.body;     // handle request body and convert to message to pass to clientResponse
 
     const parameters = {
-      origin: [[-77.4605, 38.3032 ]],
-      destinations: [
-        {id: 1, coords: [-77.4360, 37.5407]}, // Richmond, VA
-        {id: 2, coords: [-78.4767, 38.0293]}, // Charlottesville, VA
-        {id: 3, coords: [-77.3570, 38.9586]} // Reston, VA
-      ]
+      origin: [origin],
+      destinations
     }
     
     const results = await generateMatrix(parameters)
