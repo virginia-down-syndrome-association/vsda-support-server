@@ -5,13 +5,20 @@
   Major credit to Tom Igoe
 */
 
-var express = require('express');			    // include express.js
-var bodyParser = require('body-parser')
-var cors = require('cors')
+import express from 'express'		    // include express.js
+import bodyParser from 'body-parser'
+import cors from 'cors'
+import ws from 'express-ws'
+import dotenv from 'dotenv'
+import { generateMatrix } from './utilities/ors.js'
+
+dotenv.config()
+
+
 // a local instance of express:
 var server = express();
 // instance of the websocket server:
-var wsServer = require('express-ws')(server);
+var wsServer = ws(server);
 // list of client connections:
 var clients = new Array;
 
@@ -28,28 +35,33 @@ var corsOptions = {
 // serve static files from /public:
 server.use('/', express.static('public'));
 
-// server.all('*', function (req, res) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
-//   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-//   //...
-//  });
-
-// server.post('/matrix', cors(corsOptions), (req, res) => {
-server.post('/matrix', (req, res) => {
+server.post('/matrix', cors(corsOptions), async (req, res) => {
   try {
     const data = req.body;     // handle request body and convert to message to pass to clientResponse
-    
-    const response = {
-     'success': true
+
+    const parameters = {
+      origin: [[-77.4605, 38.3032 ]],
+      destinations: [
+        {id: 1, coords: [-77.4360, 37.5407]}, // Richmond, VA
+        {id: 2, coords: [-78.4767, 38.0293]}, // Charlottesville, VA
+        {id: 3, coords: [-77.3570, 38.9586]} // Reston, VA
+      ]
     }
+    
+    const results = await generateMatrix(parameters)
+    console.log('result', results)
     res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(response));
+    res.send(JSON.stringify({
+      ...results, 
+      status: 'success'
+    }));
 
 
   } catch (err) {
     console.log(err);
+    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
+    res.setHeader('Content-Type', 'application/json');
     res.status(500).send(JSON.stringify(err));
   }
 
