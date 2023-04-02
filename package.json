@@ -1,25 +1,22 @@
 {
-  "name": "vsda-support-server",
-  "version": "0.1.0",
-  "description": "A project template for Koop",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "mocha 'test/**/*.test.js'",
-    "start": "node src/index.js"
-  },
+  "name": "esri-fed-demo-express-ws-server",
+  "version": "0.0.2",
+  "description": "A websocket server using express.js and express-ws.js",
+  "main": "server.js",
   "dependencies": {
-    "config": "^3.3.8",
-    "@koopjs/koop-core": "^7.0.0"
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-ws": "^5.0.0"
   },
-  "devDependencies": {
-    "@koopjs/cli": "^1.1.4",
-    "chai": "^4.3.7",
-    "mocha": "^10.2.0"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
-  "repository": "",
-  "private": true,
   "keywords": [
-    "koop",
-    "app"
-  ]
+    "websocket",
+    "express",
+    "lambda"
+  ],
+  "author": "INCATech"
 }
