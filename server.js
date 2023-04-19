@@ -11,7 +11,8 @@ import cors from 'cors'
 import ws from 'express-ws'
 import dotenv from 'dotenv'
 import { generateMatrix } from './utilities/ors.js'
-import { generateGreatCircleRoutes, checkEsriAuthentication } from './utilities/helpers.js'
+import { generateGreatCircleRoutes } from './utilities/helpers.js'
+import { checkEsriAuthentication } from './utilities/auth.js'
 
 dotenv.config()
 
