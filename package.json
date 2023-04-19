@@ -4,11 +4,14 @@
   "description": "A websocket server using express.js and express-ws.js",
   "main": "server.js",
   "dependencies": {
+    "@turf/bbox": "^6.5.0",
+    "@turf/great-circle": "^6.5.0",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.17.1",
     "express-ws": "^5.0.0",
+    "node-fetch": "^3.3.1",
     "openrouteservice-js": "^0.2.0"
   },
   "scripts": {

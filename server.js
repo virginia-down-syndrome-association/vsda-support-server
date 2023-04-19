@@ -11,6 +11,7 @@ import cors from 'cors'
 import ws from 'express-ws'
 import dotenv from 'dotenv'
 import { generateMatrix } from './utilities/ors.js'
+import { generateGreatCircleRoutes, checkEsriAuthentication } from './utilities/helpers.js'
 
 dotenv.config()
 
@@ -34,6 +35,7 @@ var corsOptions = {
 // but it's helpful for testing
 // serve static files from /public:
 server.use('/', express.static('public'));
+server.use(checkEsriAuthentication);
 
 server.post('/matrix', cors(corsOptions), async (req, res) => {
   try {
@@ -45,11 +47,14 @@ server.post('/matrix', cors(corsOptions), async (req, res) => {
     }
     
     const results = await generateMatrix(parameters)
-    console.log('result', results)
+    const { circleRoutes, bbox } = generateGreatCircleRoutes(parameters)
+
     res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({
       ...results, 
+      circleRoutes,
+      bbox,
       status: 'success'
     }));
 
