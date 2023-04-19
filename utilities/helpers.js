@@ -38,7 +38,6 @@ const validateToken = async (token) => {
 }
 
 export const checkEsriAuthentication = async (req, res, next) => {
-  console.log(req.headers)
   try {
     if (!req.headers['esri-token']) throw new Error({type: 'missing-access-token-header'})
     const token = req.headers['esri-token'];
