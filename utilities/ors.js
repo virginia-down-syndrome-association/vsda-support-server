@@ -67,3 +67,28 @@ export const generateMatrix = async (parameters) => {
     return new Error({status: err.status, message: err.text})
   }
 }
+
+// origin, destination are [lng,lat]
+export const generateDirections = async ({ origin, destination}) => {
+  let Directions = new Openrouteservice.Directions({ api_key: process.env.OPENROUTESERVICE_API_KEY});
+  
+  const coordinates = [
+    origin,
+    destination
+  ]
+
+  const profile = 'driving-car' // driving-car, driving-hgv, cycling-regular, cycling-road, cycling-mountain, cycling-electric, foot-walking, foot-hiking, wheelchair
+
+  try{
+    let response = await Directions.calculate({
+      coordinates,
+      profile,
+      geometry: true, 
+      instructions: false,
+      format: 'geojson'
+    })
+    return response
+  } catch (err) {
+    throw new Error({status: err.status, message: err.text})
+  }
+}

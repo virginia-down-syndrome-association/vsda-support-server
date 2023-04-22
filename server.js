@@ -10,7 +10,7 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import ws from 'express-ws'
 import dotenv from 'dotenv'
-import { generateMatrix } from './utilities/ors.js'
+import { generateMatrix, generateDirections } from './utilities/ors.js'
 import { generateGreatCircleRoutes } from './utilities/helpers.js'
 import { checkEsriAuthentication } from './utilities/auth.js'
 import { getIsochrone } from './utilities/here.js'
@@ -101,14 +101,13 @@ server.post('/isochrone', cors(corsOptions), async (req, res) => {
 
 server.post('/directions', cors(corsOptions), async (req, res) => {
   try {
-   
+    const { origin, destination } = req.body;
+    const results = await generateDirections({ origin, destination })
 
     res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({
-      ...results, 
-      circleRoutes,
-      bbox,
+      results, 
       status: 'success'
     }));
 
