@@ -71,13 +71,13 @@ server.post('/matrix', cors(corsOptions), async (req, res) => {
 
 server.post('/isochrone', cors(corsOptions), async (req, res) => {
   try {
-    // location {lat, lng}, travelMode=car, travelDuration is minutes
+    // location {lat, lng}, mode=car, travelDuration is minutes
     console.log(req.body)
-    const { location, travelMode, travelDuration} = req.body;
+    const { location, mode, travelTime} = req.body;
     const params = { 
       location, 
-      travelMode, 
-      travelDuration
+      mode, 
+      travelTime
     }     // handle request body and convert to message to pass to clientResponse 
 
     const { isochrone, areaExtent} = await getIsochrone(params);

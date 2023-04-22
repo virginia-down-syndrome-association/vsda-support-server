@@ -1,4 +1,5 @@
-
+import { decode } from './flexipoly.js';
+import bbox from '@turf/bbox';
 /**
  * Reworks order of coordinates to be lng/lat instead of lat/lng
  *
@@ -88,13 +89,14 @@ const getIsochrone = async ({location, mode, travelTime}) => {
 
     const formattedTravelTime = convertToSeconds(travelTime)
     
-    const apikey = process.env.OPENROUTESERVICE_API_KEY;
-    const query = `transportMode=${mode}&range[type]=time&range[values]=${formattedTravelTime}&origin=${origin}&apikey=${apikey}`
+    const apikey = process.env.HERE_API_KEY;
+    const query = `transportMode=${mode}&range[type]=time&range[values]=${formattedTravelTime}&origin=${origin}&apiKey=${apikey}`
 
     const url = 'https://isoline.router.hereapi.com/v8/isolines' + '?' + new URLSearchParams(query); // HERE isoline API 
-
+    console.log(url)
     const response = await fetch(url);
-    const { isolines }  = await response.json();
+    const data  = await response.json();
+    const { isolines } = data;
 
     if (isolines.length > 1) console.warning('More than one isoline returned. Only the first will be used.');
     const [ primaryIsoline ] = isolines; //ASSUMPTION: only one isoline is returned/used from isolines[]
