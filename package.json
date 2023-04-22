@@ -1,7 +1,7 @@
 {
-  "name": "esri-fed-demo-express-ws-server",
+  "name": "vsda-support-server",
   "version": "0.0.2",
-  "description": "A websocket server using express.js and express-ws.js",
+  "description": "A websocket-enabled server using express.js and express-ws.js",
   "main": "server.js",
   "dependencies": {
     "@turf/bbox": "^6.5.0",
@@ -19,10 +19,10 @@
     "start": "node server.js"
   },
   "keywords": [
-    "websocket",
+    "location",
     "express",
-    "lambda"
+    "spatial"
   ],
   "type": "module",
-  "author": "INCATech"
+  "author": "tmoran"
 }
