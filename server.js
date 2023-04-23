@@ -14,6 +14,7 @@ import { generateMatrix, generateDirections } from './utilities/ors.js'
 import { generateGreatCircleRoutes } from './utilities/helpers.js'
 import { checkEsriAuthentication } from './utilities/auth.js'
 import { getIsochrone } from './utilities/here.js'
+import bbox from '@turf/bbox'
 
 dotenv.config()
 
@@ -25,12 +26,22 @@ var wsServer = ws(server);
 var clients = new Array;
 
 server.use(bodyParser.json())
-server.use(cors())
 
-var corsOptions = {
-  origin: 'http://127.0.0.1:5173/',
+
+const whiteListedOrigins = ['http://127.0.0.1:5173/','http://localhost:5173']
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Check if the request origin is in the allowedOrigins array
+    if (whiteListedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+server.use(cors(corsOptions))
 
 // static server should be removed prior to moving to production
 // but it's helpful for testing
@@ -38,7 +49,7 @@ var corsOptions = {
 server.use('/', express.static('public'));
 // server.use(checkEsriAuthentication);
 
-server.post('/matrix', cors(corsOptions), async (req, res) => {
+server.post('/matrix', async (req, res) => {
   try {
     const { destinations, origin} = req.body;     // handle request body and convert to message to pass to clientResponse
 
@@ -69,7 +80,7 @@ server.post('/matrix', cors(corsOptions), async (req, res) => {
 
 });
 
-server.post('/isochrone', cors(corsOptions), async (req, res) => {
+server.post('/isochrone', async (req, res) => {
   try {
     // location {lat, lng}, mode=car, travelDuration is minutes
     console.log(req.body)
@@ -82,7 +93,7 @@ server.post('/isochrone', cors(corsOptions), async (req, res) => {
 
     const { isochrone, areaExtent} = await getIsochrone(params);
 
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
+    // res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({
       isochrone,
@@ -93,28 +104,29 @@ server.post('/isochrone', cors(corsOptions), async (req, res) => {
 
   } catch (err) {
     console.log(err);
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
+    // res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
     res.setHeader('Content-Type', 'application/json');
     res.status(500).send(JSON.stringify(err));
   }
 });
 
-server.post('/directions', cors(corsOptions), async (req, res) => {
+server.post('/directions', async (req, res) => {
   try {
     const { origin, destination } = req.body;
     const results = await generateDirections({ origin, destination })
-
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
+    // res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({
       results, 
+      bbox: bbox(results),
+      travelTime: (results.features[0].properties.summary.duration/60).toFixed(2),
       status: 'success'
     }));
 
 
   } catch (err) {
     console.log(err);
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
+    // res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
     res.setHeader('Content-Type', 'application/json');
     res.status(500).send(JSON.stringify(err));
   }
